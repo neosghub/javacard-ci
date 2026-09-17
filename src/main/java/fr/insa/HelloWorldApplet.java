@@ -34,7 +34,7 @@ public class HelloWorldApplet extends Applet {
 
         switch (ins) {
             case INS_GET_HELLO:
-                sendHelloWorld(apdu) // ; est supprimée volontairement
+                sendHelloWorld(apdu); // ; est corrigée
                 break;
             default:
                 ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
