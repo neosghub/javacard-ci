@@ -39,8 +39,60 @@ jobs:
         run: |
           chmod +x scripts/build.sh
           ./scripts/build.sh
+          
+      - name: Upload CAP
+        uses: actions/upload-artifact@v4
+        with:
+          name: javacard-cap
+          path: build/cap/fr/insa/javacard/insa.cap
 
       - name: Run tests
         run: |
           chmod +x scripts/run_tests.sh
           ./scripts/run_tests.sh
+  sca:
+    name: SCA - Trivy
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download ECJ
+        run: |
+          mkdir -p lib
+          wget -O lib/ecj.jar \
+            https://repo.maven.apache.org/maven2/org/eclipse/jdt/ecj/3.33.0/ecj-3.33.0.jar
+
+      - name: SCA - Scan dependencies with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          scanners: 'vuln'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: true
+          exit-code: '1'
+  sast:
+    name: SAST - Semgrep
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: SAST - Scan Java source code with Semgrep
+        run: |
+          docker pull semgrep/semgrep
+
+          docker run --rm \
+            -v "$PWD:/src" \
+            -w /src \
+            semgrep/semgrep \
+            semgrep scan \
+            --config auto \
+            --error \
+            src/
