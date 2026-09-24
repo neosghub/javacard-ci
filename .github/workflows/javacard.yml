@@ -39,6 +39,12 @@ jobs:
         run: |
           chmod +x scripts/build.sh
           ./scripts/build.sh
+          
+      - name: Upload CAP
+        uses: actions/upload-artifact@v4
+        with:
+          name: javacard-cap
+          path: build/cap/fr/insa/javacard/insa.cap
 
       - name: Run tests
         run: |
