@@ -22,7 +22,7 @@ public class HelloWorldApplet extends Applet {
     }
 
     public void process(APDU apdu) {
-        if (selectingApplet()) return
+        if (selectingApplet()) return;
 
         byte[] buffer = apdu.getBuffer();
         byte cla = (byte)(buffer[ISO7816.OFFSET_CLA] & 0xFF);
